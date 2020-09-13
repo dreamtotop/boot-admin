@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.top.thymeboot.system.mapper.SysUserMapper">
+
+    <resultMap id="baseMap" type="org.top.thymeboot.system.model.SysUser">
+        <id property="id" column="id" jdbcType="VARCHAR" javaType="String"/>
+        <result property="name" column="name" jdbcType="VARCHAR" javaType="String"/>
+        <result property="password" column="password" jdbcType="VARCHAR" javaType="String"/>
+        <result property="nickName" column="nick_name" jdbcType="VARCHAR" javaType="String"/>
+        <result property="sex" column="sex" jdbcType="VARCHAR" javaType="String"/>
+        <result property="mobile" column="mobile" jdbcType="VARCHAR" javaType="String"/>
+        <result property="email" column="email" jdbcType="VARCHAR" javaType="String"/>
+        <result property="birthday" column="birthday" jdbcType="VARCHAR" javaType="String"/>
+        <result property="hobby" column="hobby" jdbcType="VARCHAR" javaType="String"/>
+        <result property="liveAddress" column="live_address" jdbcType="VARCHAR" javaType="String"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP" javaType="DATE"/>
+        <result property="updateTime" column="update_time" jdbcType="TIMESTAMP" javaType="DATE"/>
+    </resultMap>
+
+    <sql id="baseSql">
+        id,name,password,nick_name,sex,mobile,email,birthday,hobby,create_time,update_time
+    </sql>
+
+    <select id="findByName" resultMap="baseMap" parameterType="string">
+        SELECT
+        <include refid="baseSql"/>
+        from sys_user
+        WHERE name = #{name}
+    </select>
+
+    <select id="getAll" resultMap="baseMap">
+        SELECT
+        <include refid="baseSql"/>
+        from sys_user
+    </select>
+
+    <select id="getById" resultMap="baseMap" parameterType="string">
+        SELECT
+        <include refid="baseSql"/>
+        from sys_user
+        WHERE id = #{id}
+    </select>
+
+
+    <update id="updatePasswordById">
+        UPDATE sys_user
+        SET password = #{password}
+        WHERE
+        id = #{id}
+    </update>
+
+
+
+</mapper>

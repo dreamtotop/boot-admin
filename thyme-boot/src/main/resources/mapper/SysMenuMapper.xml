@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.top.thymeboot.system.mapper.SysMenuMapper">
+
+    <sql id="base">
+        id, parent_id,menu_name,menu_code,menu_href,menu_level,menu_weight,is_show,create_date,create_by
+    </sql>
+
+    
+    <select id="findByRoleId" resultType="org.top.thymeboot.system.model.SysMenu" parameterType="string">
+        SELECT * FROM sys_menu m
+        left join sys_menu_role r ON m.id = r.menu_id
+        WHERE
+        m.is_show = 1 and
+        r.role_id = #{roleId}
+        ORDER BY m.menu_weitgh
+    </select>
+
+
+    <update id="updateMenu" parameterType="org.top.thymeboot.system.vo.SysMenuVO">
+        UPDATE sys_menu
+        set parent_id = #{parentId}, menu_name = #{menuName},menu_code = #{menuCode}, menu_href = #{menuHref},
+        menu_level = #{menuLevel}, menu_weight = #{menuWeight}, menu_icon = #{menuIcon}, is_show = #{isShow}
+        WHERE id = #{id}
+    </update>
+
+
+    <insert id="addMenu" parameterType="org.top.thymeboot.system.vo.SysMenuVO">
+        INSERT INTO sys_menu(<include refid="base"/>)
+        VALUES (#{id}, #{parentId}, #{menuName}, #{menuCode}, #{menuHref}, #{menuLevel}, #{menuWeight}, ${isShow}, #{createDate}, #{createBy})
+    </insert>
+
+
+    <select id="getRoleMenu" resultType="string">
+        SELECT id FROM sys_menu sm
+        WHERE sm.menu_level = 1 and sm.id in
+        (select mr.menu_id from sys_menu_role mr
+        left join sys_menu m on mr.menu_id = m.id
+        where mr.role_id = #{roleId})
+        order by menu_weight
+    </select>
+
+
+    
+    
+</mapper>
