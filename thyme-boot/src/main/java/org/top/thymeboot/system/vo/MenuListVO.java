@@ -1,11 +1,13 @@
 package org.top.thymeboot.system.vo;
 
+import lombok.Builder;
 import lombok.Data;
 import org.top.thymeboot.system.model.SysMenu;
 
 import java.util.List;
 
 @Data
+@Builder
 public class MenuListVO {
 
     /**

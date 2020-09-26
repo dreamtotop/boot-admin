@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.top.thymeboot.system.mapper.SysRoleMapper;
 import org.top.thymeboot.system.model.SysRole;
 import org.top.thymeboot.system.service.SysRoleService;
@@ -37,11 +38,13 @@ public class SysRoleServiceImpl implements SysRoleService {
     }
 
     @Override
+    @Transactional(rollbackFor = {RuntimeException.class,Exception.class})
     public int deleteById(String id) {
         return sysRoleMapper.deleteById(id);
     }
 
     @Override
+    @Transactional(rollbackFor = {RuntimeException.class,Exception.class})
     public int updateById(SysRole sysRole) {
         return sysRoleMapper.updateById(sysRole);
     }
