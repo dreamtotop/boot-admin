@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.top.thymeboot.system.mapper.SysMenuMapper;
 import org.top.thymeboot.system.mapper.SysRoleMapper;
 import org.top.thymeboot.system.model.SysMenu;
@@ -71,11 +72,13 @@ public class SysMenuServiceImpl implements SysMenuService {
     }
 
     @Override
+    @Transactional(rollbackFor = {Exception.class, RuntimeException.class})
     public int updateMenu(SysMenuVO sysMenu) {
         return sysMenuMapper.updateMenu(sysMenu);
     }
 
     @Override
+    @Transactional(rollbackFor = {Exception.class,RuntimeException.class})
     public int addMenu(SysMenuVO sysMenu) {
         return sysMenuMapper.addMenu(sysMenu);
     }
@@ -121,6 +124,7 @@ public class SysMenuServiceImpl implements SysMenuService {
     }
 
     @Override
+    @Transactional(rollbackFor = {Exception.class,RuntimeException.class})
     public int deleteMenuById(String id) {
         return sysMenuMapper.deleteMenuById(id);
     }

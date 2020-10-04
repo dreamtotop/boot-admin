@@ -3,7 +3,7 @@ package org.top.thymeboot.system.vo;
 import lombok.Data;
 
 @Data
-public class SysMenuNameVO {
+public class SysMenuNameVO extends SysMenuVO{
 
     private String menuNames;
 

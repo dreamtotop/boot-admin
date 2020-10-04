@@ -3,19 +3,17 @@ package org.top.thymeboot.system.controller.rest;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.top.thymeboot.common.base.ApiResponse;
 import org.top.thymeboot.common.utils.SecurityUtils;
+import org.top.thymeboot.common.utils.UUIDUtils;
 import org.top.thymeboot.system.model.SysMenu;
 import org.top.thymeboot.system.service.SysMenuRoleService;
 import org.top.thymeboot.system.service.SysMenuService;
-import org.top.thymeboot.system.vo.MenuListVO;
-import org.top.thymeboot.system.vo.MenuVO;
+import org.top.thymeboot.system.vo.*;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -69,4 +67,77 @@ public class MenuRestController {
         jsonObject.put("menuList",listVoList);
         return ApiResponse.ofSuccess(jsonObject);
     }
+
+    @GetMapping("/deleteMenu")
+    public ApiResponse deleteMenu(@RequestParam("id") String id){
+        JSONObject jsonObject = new JSONObject();
+        try{
+            if(sysMenuService.deleteMenuById(id)>0){
+                jsonObject.put("code",200);
+            }
+        }
+        catch (Exception e){
+            jsonObject.put("code",500);
+        }
+        return ApiResponse.ofSuccess(jsonObject);
+    }
+
+    @PostMapping("/updateMenu")
+    public ApiResponse updateMenu(@RequestBody SysMenuNameVO menuVO){
+        JSONObject jsonObject = new JSONObject();
+        SysMenuVO sysMenu = new SysMenuNameVO();
+        BeanUtils.copyProperties(menuVO, sysMenu);
+        String menuName = sysMenuService.getByMenuName(menuVO.getMenuNames());
+        sysMenu.setMenuName(menuName);
+        if(sysMenuService.updateMenu(sysMenu) > 0){
+            jsonObject.put("code",200);
+        }
+        else{
+            jsonObject.put("code",500);
+        }
+        return ApiResponse.ofSuccess(jsonObject);
+    }
+
+    @PostMapping("/addMenu")
+    public ApiResponse addMenu(@RequestBody SysMenuNameVO sysMenuNameVO){
+        JSONObject jsonObject = new JSONObject();
+        SysMenu sysMenu = sysMenuService.getByName(sysMenuNameVO.getMenuNames(), sysMenuNameVO.getMenuCode(), sysMenuNameVO.getMenuHref());
+        if(sysMenu == null){
+            Authentication authentication = SecurityUtils.getCurrentUserAuthentication();
+            String id = UUIDUtils.getUUID();
+            SysMenuVO menu = new SysMenuVO();
+            BeanUtils.copyProperties(sysMenuNameVO,menu);
+            menu.setId(id);
+            menu.setCreateBy((String)authentication.getPrincipal());
+            try{
+                if(sysMenuService.addMenu(menu) > 0) {
+                    jsonObject.put("code", 200);
+                }
+            }
+            catch (Exception e){
+                jsonObject.put("code",500);
+            }
+        }
+        else{
+            jsonObject.put("code",501);
+        }
+        return ApiResponse.ofSuccess(jsonObject);
+    }
+
+    @GetMapping("/getMenuLevel")
+    public ApiResponse getMenuLevel(){
+        JSONObject jsonObject = new JSONObject();
+        List<String> menuLevel = sysMenuService.getMenuLevel();
+        jsonObject.put("menuLevel",menuLevel);
+        return ApiResponse.ofSuccess(jsonObject);
+    }
+
+    @GetMapping("/getPreviousMenu")
+    public ApiResponse getPreviousMenu(@RequestParam("menuLevel") String menuLevel){
+        JSONObject jsonObject = new JSONObject();
+        List<MenuNameVO> previousMenu = sysMenuService.getPreviousMenu(String.valueOf((Integer.parseInt(menuLevel) - 1)));
+        jsonObject.put("menuNames",previousMenu);
+        return ApiResponse.ofSuccess(jsonObject);
+    }
+
 }
